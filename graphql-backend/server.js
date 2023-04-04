@@ -19,6 +19,7 @@ const {
 } = require("graphql");
 
 const Course = require("./models/course");
+const Forms = require("./models/form");
 
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
 const db = mongoose.connection;
@@ -34,6 +35,19 @@ const CourseType = new GraphQLObjectType({
     courseName: { type: GraphQLNonNull(GraphQLString) },
     section: { type: GraphQLNonNull(GraphQLString) },
     semester: { type: GraphQLNonNull(GraphQLString) },
+  }),
+});
+
+const FormType = new GraphQLObjectType({
+  name: "Form",
+  description: "This is the form Patients can submit",
+  fields: () => ({
+    _id: { type: GraphQLNonNull(GraphQLString) },
+    patientId: { type: GraphQLNonNull(GraphQLString) },
+    bodyTemp: { type: GraphQLNonNull(GraphQLString) },
+    heartRate: { type: GraphQLNonNull(GraphQLString) },
+    bloodPress: { type: GraphQLNonNull(GraphQLString) },
+    respRate: { type: GraphQLNonNull(GraphQLString) },
   }),
 });
 
@@ -61,6 +75,27 @@ const RootQueryType = new GraphQLObjectType({
         return courses;
       },
     },
+    forms: {
+      type: FormType,
+      description: "A Single Form",
+      args: {
+        _id: { type: GraphQLString },
+      },
+      resolve: async (parent, args) => {
+        let form;
+        form = await Form.findById(args._id);
+        return form;
+      },
+    },
+    courses: {
+      type: new GraphQLList(FormType),
+      description: "List of All Forms",
+      resolve: async () => {
+        const forms = await Form.find();
+        return forms;
+      },
+    }
+
   }),
 });
 
@@ -116,6 +151,28 @@ const RootMutationType = new GraphQLObjectType({
         record.semester = args.semester;
         const course = await record.save();
         return course;
+      },
+    },
+    addForm: {
+      type: FormType,
+      description: "Add a Form",
+      args: {
+        patientId: { type: GraphQLNonNull(GraphQLString) },
+        bodyTemp: { type: GraphQLNonNull(GraphQLString) },
+        heartRate: { type: GraphQLNonNull(GraphQLString) },
+        bloodPress: { type: GraphQLNonNull(GraphQLString) },
+        respRate: { type: GraphQLNonNull(GraphQLString) },
+      },
+      resolve: async (parent, args) => {
+        const form = new Course({
+          patientId: args.patientId,
+          bodyTemp: args.bodyTemp,
+          heartRate: args.heartRate,
+          bloodPress: args.bloodPress,
+          respRate: args.respRate,
+        });
+        const newForm = await form.save();
+        return newForm;
       },
     },
   }),
