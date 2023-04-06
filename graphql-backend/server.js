@@ -1,9 +1,10 @@
-require('dotenv').config()
-const cors = require('cors');
-const express = require('express')
-const app = express()
-const mongoose = require('mongoose')    
-const expressGraphQL = require('express-graphql').graphqlHTTP
+require("dotenv").config();
+const cors = require("cors");
+const express = require("express");
+const app = express();
+const mongoose = require("mongoose");
+const expressGraphQL = require("express-graphql").graphqlHTTP;
+const Nurse = require("./models/nurse");
 
 app.use(cors()); // Make sure you have express initialised before this.
 const {
@@ -12,14 +13,13 @@ const {
   GraphQLString,
   GraphQLList,
   GraphQLInt,
-  GraphQLNonNull
-} = require('graphql')
-const Course = require('./models/nurse')
+  GraphQLNonNull,
+} = require("graphql");
 
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true })
-const db = mongoose.connection
-db.on('error', (error) => console.error(error))
-db.once('open', () => console.log('Connected to Database'))
+mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
+const db = mongoose.connection;
+db.on("error", (error) => console.error(error));
+db.once("open", () => console.log("Connected to Database"));
 
 // const PatientType = new GraphQLObjectType
 // ({
@@ -33,24 +33,23 @@ db.once('open', () => console.log('Connected to Database'))
 //     passWord: { type: GraphQLNonNull(GraphQLString) }
 //   })
 // })
-const NurseType = new GraphQLObjectType
-({
-  name: 'Nurse',
-  description: 'Represent Nurse',
+
+const NurseType = new GraphQLObjectType({
+  name: "Nurse",
+  description: "Represent Nurse",
   fields: () => ({
     _id: { type: GraphQLNonNull(GraphQLString) },
-    name: { type: GraphQLNonNull(GraphQLString)  },
+    name: { type: GraphQLNonNull(GraphQLString) },
     userName: { type: GraphQLNonNull(GraphQLString) },
     email: { type: GraphQLNonNull(GraphQLString) },
-    password: { type: GraphQLNonNull(GraphQLString) }
-  })
-})
+    password: { type: GraphQLNonNull(GraphQLString) },
+  }),
+});
 const RootQueryType = new GraphQLObjectType({
-  name: 'Query',
-  description: 'Root Query',
-  fields: () => 
-  ({
-    // patient: 
+  name: "Query",
+  description: "Root Query",
+  fields: () => ({
+    // patient:
     // {
     //   type: PatientType,
     //   description: 'A Single Patient',
@@ -64,46 +63,42 @@ const RootQueryType = new GraphQLObjectType({
 
     //   }
     // },
-    // patients: 
+    // patients:
     // {
     //   type: new GraphQLList(PatientType),
     //   description: 'List of All patient',
     //   resolve: async () => {
     //      const patients = await Patient.find();
-    //       return patients;         
+    //       return patients;
     //   }
     // },
-    nurse: 
-    {
+    nurse: {
       type: NurseType,
-      description: 'A Single nurse',
+      description: "A Single nurse",
       args: {
-        _id: { type: GraphQLString }
+        _id: { type: GraphQLString },
       },
       resolve: async (parent, args) => {
-          let nurse
-          nurse = await Nurse.findById(args._id)
-         return nurse;
-
-      }
+        let nurse;
+        nurse = await Nurse.findById(args._id);
+        return nurse;
+      },
     },
-    nurses: 
-    {
+    nurses: {
       type: new GraphQLList(NurseType),
-      description: 'List of All nurse',
+      description: "List of All nurse",
       resolve: async () => {
-         const nurses = await Nurse.find();
-          return nurses;         
-      }
-    }
-  })
-  
-})
+        const nurses = await Nurse.find();
+        return nurses;
+      },
+    },
+  }),
+});
 const RootMutationType = new GraphQLObjectType({
-  name: 'Mutation',
-  description: 'Root Mutation',
+  name: "Mutation",
+  description: "Root Mutation",
   fields: () => ({
-    // addPatient: 
+    // addPatient:
     // {
     //   type: PatientType,
     //   description: 'Add a patient',
@@ -112,7 +107,7 @@ const RootMutationType = new GraphQLObjectType({
     //     userName: { type: GraphQLNonNull(GraphQLString) },
     //     emailAdress: { type: GraphQLNonNull(GraphQLString) },
     //     passWord: { type: GraphQLNonNull(GraphQLString) }
-        
+
     //   },
     //   resolve: async (parent, args) => {
     //     const patient = new Patient({
@@ -126,42 +121,43 @@ const RootMutationType = new GraphQLObjectType({
 
     //   }
     // },
-    addNurse: 
-    {
+    addNurse: {
       type: NurseType,
-      description: 'Add a nurse',
+      description: "Add a nurse",
       args: {
-        name: { type: GraphQLNonNull(GraphQLString)  },
+        name: { type: GraphQLNonNull(GraphQLString) },
         userName: { type: GraphQLNonNull(GraphQLString) },
         email: { type: GraphQLNonNull(GraphQLString) },
-        password: { type: GraphQLNonNull(GraphQLString) }
-        
+        password: { type: GraphQLNonNull(GraphQLString) },
       },
       resolve: async (parent, args) => {
         const nurse = new Nurse({
           name: args.name,
           userName: args.userName,
           email: args.email,
-          password: args.password
+          password: args.password,
         });
         const newNurse = await nurse.save();
         return newNurse;
-
-      }
-    }
-  })
-})
+      },
+    },
+  }),
+});
 
 const schema = new GraphQLSchema({
   query: RootQueryType,
-  mutation: RootMutationType
-})
+  mutation: RootMutationType,
+});
 
-app.use(express.json())
-app.use('/users', expressGraphQL({
-schema: schema,
-graphiql: true
-}));
+app.use(express.json());
+app.use(
+  "/users",
+  expressGraphQL({
+    schema: schema,
+    graphiql: true,
+  })
+);
 
-
-app.listen(2003, () => console.log('Server Started: http://localhost:2003/users'))
+app.listen(2003, () =>
+  console.log("Server Started: http://localhost:2003/users")
+);
