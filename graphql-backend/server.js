@@ -1,196 +1,167 @@
-require("dotenv").config();
-const express = require("express");
-const app = express();
-const mongoose = require("mongoose");
-const expressGraphQL = require("express-graphql").graphqlHTTP;
-const cors = require("cors");
-const corsOptions = {
-  origin: "*",
-  credentials: true,
-  optionSuccessStatus: 200,
-};
+require('dotenv').config()
+const cors = require('cors');
+const express = require('express')
+const app = express()
+const mongoose = require('mongoose')    
+const expressGraphQL = require('express-graphql').graphqlHTTP
+
+app.use(cors()); // Make sure you have express initialised before this.
 const {
   GraphQLSchema,
   GraphQLObjectType,
   GraphQLString,
   GraphQLList,
   GraphQLInt,
-  GraphQLNonNull,
-} = require("graphql");
+  GraphQLNonNull
+} = require('graphql')
+const Course = require('./models/nurse')
 
-const Course = require("./models/course");
-const Forms = require("./models/form");
+mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true })
+const db = mongoose.connection
+db.on('error', (error) => console.error(error))
+db.once('open', () => console.log('Connected to Database'))
 
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
-const db = mongoose.connection;
-db.on("error", (error) => console.error(error));
-db.once("open", () => console.log("Connected to Database"));
-
-const CourseType = new GraphQLObjectType({
-  name: "Course",
-  description: "Represents a course avaliable at Centennial College",
+// const PatientType = new GraphQLObjectType
+// ({
+//   name: 'Patient',
+//   description: 'Represent Patient',
+//   fields: () => ({
+//     _id: { type: GraphQLNonNull(GraphQLString) },
+//     fullName: { type: GraphQLNonNull(GraphQLString)  },
+//     userName: { type: GraphQLNonNull(GraphQLString) },
+//     emailAdress: { type: GraphQLNonNull(GraphQLString) },
+//     passWord: { type: GraphQLNonNull(GraphQLString) }
+//   })
+// })
+const NurseType = new GraphQLObjectType
+({
+  name: 'Nurse',
+  description: 'Represent Nurse',
   fields: () => ({
     _id: { type: GraphQLNonNull(GraphQLString) },
-    courseCode: { type: GraphQLNonNull(GraphQLString) },
-    courseName: { type: GraphQLNonNull(GraphQLString) },
-    section: { type: GraphQLNonNull(GraphQLString) },
-    semester: { type: GraphQLNonNull(GraphQLString) },
-  }),
-});
-
-const FormType = new GraphQLObjectType({
-  name: "Form",
-  description: "This is the form Patients can submit",
-  fields: () => ({
-    _id: { type: GraphQLNonNull(GraphQLString) },
-    patientId: { type: GraphQLNonNull(GraphQLString) },
-    bodyTemp: { type: GraphQLNonNull(GraphQLString) },
-    heartRate: { type: GraphQLNonNull(GraphQLString) },
-    bloodPress: { type: GraphQLNonNull(GraphQLString) },
-    respRate: { type: GraphQLNonNull(GraphQLString) },
-  }),
-});
-
+    name: { type: GraphQLNonNull(GraphQLString)  },
+    userName: { type: GraphQLNonNull(GraphQLString) },
+    email: { type: GraphQLNonNull(GraphQLString) },
+    password: { type: GraphQLNonNull(GraphQLString) }
+  })
+})
 const RootQueryType = new GraphQLObjectType({
-  name: "Query",
-  description: "Root Query",
-  fields: () => ({
-    course: {
-      type: CourseType,
-      description: "A Single Course",
+  name: 'Query',
+  description: 'Root Query',
+  fields: () => 
+  ({
+    // patient: 
+    // {
+    //   type: PatientType,
+    //   description: 'A Single Patient',
+    //   args: {
+    //     _id: { type: GraphQLString }
+    //   },
+    //   resolve: async (parent, args) => {
+    //       let patient
+    //       patient = await Patient.findById(args._id)
+    //      return patient;
+
+    //   }
+    // },
+    // patients: 
+    // {
+    //   type: new GraphQLList(PatientType),
+    //   description: 'List of All patient',
+    //   resolve: async () => {
+    //      const patients = await Patient.find();
+    //       return patients;         
+    //   }
+    // },
+    nurse: 
+    {
+      type: NurseType,
+      description: 'A Single nurse',
       args: {
-        _id: { type: GraphQLString },
+        _id: { type: GraphQLString }
       },
       resolve: async (parent, args) => {
-        let course;
-        course = await Course.findById(args._id);
-        return course;
-      },
+          let nurse
+          nurse = await Nurse.findById(args._id)
+         return nurse;
+
+      }
     },
-    courses: {
-      type: new GraphQLList(CourseType),
-      description: "List of All Courses",
+    nurses: 
+    {
+      type: new GraphQLList(NurseType),
+      description: 'List of All nurse',
       resolve: async () => {
-        const courses = await Course.find();
-        return courses;
-      },
-    },
-    forms: {
-      type: FormType,
-      description: "A Single Form",
-      args: {
-        _id: { type: GraphQLString },
-      },
-      resolve: async (parent, args) => {
-        let form;
-        form = await Form.findById(args._id);
-        return form;
-      },
-    },
-    courses: {
-      type: new GraphQLList(FormType),
-      description: "List of All Forms",
-      resolve: async () => {
-        const forms = await Form.find();
-        return forms;
-      },
+         const nurses = await Nurse.find();
+          return nurses;         
+      }
     }
-
-  }),
-});
-
+  })
+  
+})
 const RootMutationType = new GraphQLObjectType({
-  name: "Mutation",
-  description: "Root Mutation",
+  name: 'Mutation',
+  description: 'Root Mutation',
   fields: () => ({
-    addCourse: {
-      type: CourseType,
-      description: "Add a Course",
+    // addPatient: 
+    // {
+    //   type: PatientType,
+    //   description: 'Add a patient',
+    //   args: {
+    //     name: { type: GraphQLNonNull(GraphQLString)  },
+    //     userName: { type: GraphQLNonNull(GraphQLString) },
+    //     emailAdress: { type: GraphQLNonNull(GraphQLString) },
+    //     passWord: { type: GraphQLNonNull(GraphQLString) }
+        
+    //   },
+    //   resolve: async (parent, args) => {
+    //     const patient = new Patient({
+    //       fullName: args.fullName,
+    //       userName: args.userName,
+    //       emailAdress: args.emailAdress,
+    //       passWord: args.passWord
+    //     });
+    //     const newPatient = await patient.save();
+    //     return newPatient;
+
+    //   }
+    // },
+    addNurse: 
+    {
+      type: NurseType,
+      description: 'Add a nurse',
       args: {
-        courseCode: { type: GraphQLNonNull(GraphQLString) },
-        courseName: { type: GraphQLNonNull(GraphQLString) },
-        section: { type: GraphQLNonNull(GraphQLString) },
-        semester: { type: GraphQLNonNull(GraphQLString) },
+        name: { type: GraphQLNonNull(GraphQLString)  },
+        userName: { type: GraphQLNonNull(GraphQLString) },
+        email: { type: GraphQLNonNull(GraphQLString) },
+        password: { type: GraphQLNonNull(GraphQLString) }
+        
       },
       resolve: async (parent, args) => {
-        const course = new Course({
-          courseCode: args.courseCode,
-          courseName: args.courseName,
-          section: args.section,
-          semester: args.semester,
+        const nurse = new Nurse({
+          name: args.name,
+          userName: args.userName,
+          email: args.email,
+          password: args.password
         });
-        const newCourse = await course.save();
-        return newCourse;
-      },
-    },
-    deleteCourse: {
-      type: CourseType,
-      description: "Delete a Course",
-      args: {
-        courseId: { type: GraphQLNonNull(GraphQLString) },
-      },
-      resolve: async (parent, args) => {
-        return Course.findByIdAndDelete(args.courseId);
-      },
-    },
-    updateCourse: {
-      type: CourseType,
-      description: "Update an existing course",
-      args: {
-        _id: { type: GraphQLNonNull(GraphQLString) },
-        courseCode: { type: GraphQLNonNull(GraphQLString) },
-        courseName: { type: GraphQLNonNull(GraphQLString) },
-        section: { type: GraphQLNonNull(GraphQLString) },
-        semester: { type: GraphQLNonNull(GraphQLString) },
-      },
-      resolve: async (parent, args) => {
-        const record = await Course.findById(args._id);
-        record.courseCode = args.courseCode;
-        record.courseName = args.courseName;
-        record.section = args.section;
-        record.semester = args.semester;
-        const course = await record.save();
-        return course;
-      },
-    },
-    addForm: {
-      type: FormType,
-      description: "Add a Form",
-      args: {
-        patientId: { type: GraphQLNonNull(GraphQLString) },
-        bodyTemp: { type: GraphQLNonNull(GraphQLString) },
-        heartRate: { type: GraphQLNonNull(GraphQLString) },
-        bloodPress: { type: GraphQLNonNull(GraphQLString) },
-        respRate: { type: GraphQLNonNull(GraphQLString) },
-      },
-      resolve: async (parent, args) => {
-        const form = new Course({
-          patientId: args.patientId,
-          bodyTemp: args.bodyTemp,
-          heartRate: args.heartRate,
-          bloodPress: args.bloodPress,
-          respRate: args.respRate,
-        });
-        const newForm = await form.save();
-        return newForm;
-      },
-    },
-  }),
-});
+        const newNurse = await nurse.save();
+        return newNurse;
+
+      }
+    }
+  })
+})
 
 const schema = new GraphQLSchema({
   query: RootQueryType,
-  mutation: RootMutationType,
-});
+  mutation: RootMutationType
+})
 
-app.use(express.json());
-app.use(cors(corsOptions));
-app.use(
-  "/courses",
-  expressGraphQL({
-    schema: schema,
-    graphiql: true,
-  })
-);
+app.use(express.json())
+app.use('/users', expressGraphQL({
+schema: schema,
+graphiql: true
+}));
 
-app.listen(3500, () => console.log("Server Started:"));
+
+app.listen(2003, () => console.log('Server Started: http://localhost:2003/users'))
