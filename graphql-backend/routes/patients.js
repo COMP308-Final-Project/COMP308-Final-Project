@@ -20,10 +20,10 @@ router.get('/:id', getPatient, (req, res) => {
 // Creating one patient
 router.post('/', async (req, res) => {
   const patient = new Patient({
-    fullName: req.body.fullName,
+    name: req.body.name,
     userName: req.body.userName,
-    emailAdress: req.body.emailAdress,
-    passWord: req.body.passWord
+    email: req.body.email,
+    password: req.body.password
   })
   try {
     const newPatient = await patient.save()
@@ -35,17 +35,17 @@ router.post('/', async (req, res) => {
 
 // Updating One patient
 router.patch('/:id', getPatient, async (req, res) => {
-  if (req.body.fullName != null) {
-    res.patient.fullName = req.body.fullName
+  if (req.body.name != null) {
+    res.patient.name = req.body.name
   }
   if (req.body.userName != null) {
     res.patient.userName = req.body.userName
   }
-  if (req.body.emailAdress != null) {
-    res.patient.emailAdress = req.body.emailAdress
+  if (req.body.email != null) {
+    res.patient.email = req.body.email
   }
-  if (req.body.passWord != null) {
-    res.patient.passWord = req.body.passWord
+  if (req.body.password != null) {
+    res.patient.password = req.body.password
   }
   try {
     const updatedPatient = await res.patient.save()
