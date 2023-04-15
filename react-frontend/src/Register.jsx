@@ -169,7 +169,7 @@ const Register = (props) => {
                     </form>
                     <p>
                         Already have account?<br />
-                        <button className="link-btn" onClick={() => props.onFormSwitch("login")}> Create new Account</button>
+                        <button className="link-btn" onClick={() => props.onFormSwitch("login")}> Login</button>
                     </p>
                 </section>
             )}
