@@ -86,7 +86,7 @@ const Register = (props) => {
                 <section>
                     <h1>Success!</h1>
                     <p>
-                        <a href="#">Sign In</a>
+                        <a href="/">Sign In</a>
                     </p>
                 </section>
             ) : (
@@ -177,4 +177,4 @@ const Register = (props) => {
     )
 }
 
-export default Register
+export default Register;

@@ -62,7 +62,7 @@ const Login = (props) => {
                     <h1>You are logged in!</h1>
                     <br />
                     <p>
-                        <a href="#">Go to Home</a>
+                        <a href="/Home">Go to Home</a>
                     </p>
                 </section>
             ) : (
@@ -101,4 +101,4 @@ const Login = (props) => {
     )
 }
 
-export default Login
+export default Login;
