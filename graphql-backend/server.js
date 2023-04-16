@@ -5,7 +5,7 @@ const app = express();
 const connectDB = require("./config/db");
 const expressGraphQL = require("express-graphql").graphqlHTTP;
 const port = process.env.PORT || 2003;
-const Nurse = require("./models/nurse");
+const Nurse = require("./models/Nurse");
 const Patient = require("./models/patient")
 
 app.use(cors()); // Make sure you have express initialised before this.
