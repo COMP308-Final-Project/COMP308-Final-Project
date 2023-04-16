@@ -2,8 +2,9 @@ require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
 const app = express();
-const mongoose = require("mongoose");
+const connectDB = require("./config/db");
 const expressGraphQL = require("express-graphql").graphqlHTTP;
+const port = process.env.PORT || 2003;
 const Nurse = require("./models/nurse");
 const Patient = require("./models/patient")
 
@@ -17,10 +18,8 @@ const {
   GraphQLNonNull,
 } = require("graphql");
 
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
-const db = mongoose.connection;
-db.on("error", (error) => console.error(error));
-db.once("open", () => console.log("Connected to Database"));
+// Connect Database
+connectDB();
 
 const PatientType = new GraphQLObjectType
 ({
@@ -159,6 +158,6 @@ app.use(
   })
 );
 
-app.listen(2003, () =>
-  console.log("Server Started: http://localhost:2003/users")
+app.listen(port, () =>
+  console.log(`Server Started: http://localhost:${port}/users`)
 );
