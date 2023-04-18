@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import Login from './login/Login';
 import Register from './login/Register';
+import FitnessGame from './fitness-game/FitnessGame';
 
 const cache = new InMemoryCache({
   typePolicies: {
@@ -37,7 +38,8 @@ function App () {
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path="/home" element={<Home/>}/>
-
+        <Route path="/fitness-game" element={<FitnessGame/>}/>
+        
         <Route  path="*" element={<NotFound/>}/>
       </Routes>
       </div>
