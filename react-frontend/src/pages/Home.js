@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import accountContext from "../context/accountContext";
 import { useNavigate } from "react-router-dom";
 
@@ -14,6 +14,7 @@ export default function Home() {
     if (!loggedIn) {
       navigate("/");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

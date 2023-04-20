@@ -1,6 +1,6 @@
 import { useRef, useState, useContext, useEffect } from "react";
 import accountContext from "../context/accountContext";
-import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { gql, useLazyQuery } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 
 //bootstrap
@@ -66,6 +66,7 @@ export default function Login(props) {
     } else if (logIn) {
       setErrMsg("Incorrect userName or password.");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, data]);
 
   return (

@@ -96,6 +96,7 @@ export default function Register(props) {
           setRegister(false);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, data]);
 
   async function handleRegister(e) {
