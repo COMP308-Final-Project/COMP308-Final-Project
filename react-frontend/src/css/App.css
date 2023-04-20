@@ -11,7 +11,7 @@
   flex-direction: column;
   
 }
-@media  and (min-width: 600px) {
+@media(min-width: 600px) {
   
 }
 .auth-form-container{
@@ -22,7 +22,6 @@
 }
 label{
   text-align: left;
-  padding: 0.25rem 0;
 }
 input{
   margin: 0.1rem 0;
