@@ -9,6 +9,7 @@ import Register from "./login/Register";
 import FitnessGame from "./fitness-game/FitnessGame";
 import Covid from "./covid/Covid";
 import accountContext from "./context/accountContext";
+import NavBar from "./pages/NavBar";
 
 const cache = new InMemoryCache({
   typePolicies: {
@@ -47,6 +48,9 @@ function App() {
       >
         <ApolloProvider client={client}>
           <Router>
+            <div className="App">
+              <NavBar />
+            </div>
             <div className="container">
               <Routes>
                 <Route path="/" element={<LandingPage />} />
