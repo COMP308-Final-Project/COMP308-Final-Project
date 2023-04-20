@@ -6,6 +6,7 @@ const connectDB = require("./config/db");
 const expressGraphQL = require("express-graphql").graphqlHTTP;
 const port = process.env.PORT || 2003;
 const User = require("./models/user");
+const Form = require("./models/form");
 
 app.use(cors()); // Make sure you have express initialised before this.
 const {
@@ -30,6 +31,19 @@ const UserType = new GraphQLObjectType({
     email: { type: GraphQLNonNull(GraphQLString) },
     password: { type: GraphQLNonNull(GraphQLString) },
     userType: { type: GraphQLNonNull(GraphQLString) },
+  }),
+});
+
+const FormType = new GraphQLObjectType({
+  name: "Form",
+  description: "This is the form Patients can submit",
+  fields: () => ({
+    _id: { type: GraphQLNonNull(GraphQLString) },
+    patientId: { type: GraphQLNonNull(GraphQLString) },
+    bodyTemp: { type: GraphQLNonNull(GraphQLString) },
+    heartRate: { type: GraphQLNonNull(GraphQLString) },
+    bloodPress: { type: GraphQLNonNull(GraphQLString) },
+    respRate: { type: GraphQLNonNull(GraphQLString) },
   }),
 });
 
@@ -62,6 +76,24 @@ const UserQuery = new GraphQLObjectType({
   }),
 });
 
+const FormQuery = new GraphQLObjectType({
+  name: "Query",
+  description: "Form Queries",
+  fields: () => ({
+    userById: {
+      type: FormType,
+      description: "Returns the forms of a patient",
+      args: {
+        _id: { type: GraphQLString },
+      },
+      resolve: async (parent, args) => {
+        let forms = await Form.findById(args._id);
+        return forms;
+      },
+    },
+  }),
+});
+
 const UserMutation = new GraphQLObjectType({
   name: "Mutation",
   description: "User Mutation",
@@ -89,8 +121,37 @@ const UserMutation = new GraphQLObjectType({
   }),
 });
 
+const FormMutation = new GraphQLObjectType({
+  name: "Mutation",
+  description: "Form Mutation",
+  fields: () => ({
+    addForm: {
+      type: FormType,
+      description: "Add a Form",
+      args: {
+        patientId: { type: GraphQLNonNull(GraphQLString) },
+        bodyTemp: { type: GraphQLNonNull(GraphQLString) },
+        heartRate: { type: GraphQLNonNull(GraphQLString) },
+        bloodPress: { type: GraphQLNonNull(GraphQLString) },
+        respRate: { type: GraphQLNonNull(GraphQLString) },
+      },
+      resolve: async (parent, args) => {
+        const form = new Course({
+          patientId: args.patientId,
+          bodyTemp: args.bodyTemp,
+          heartRate: args.heartRate,
+          bloodPress: args.bloodPress,
+          respRate: args.respRate,
+        });
+        const newForm = await form.save();
+        return newForm;
+      },
+    },
+  }),
+});
+
 const userSchema = new GraphQLSchema({
-  query: UserQuery,
+  query: UserQuery, FormQuery,
   mutation: UserMutation,
 });
 
