@@ -36,9 +36,8 @@ const UserType = new GraphQLObjectType({
 
 const FormType = new GraphQLObjectType({
   name: "Form",
-  description: "This is the form Patients can submit",
+  description: "This is the Patient's Form",
   fields: () => ({
-    _id: { type: GraphQLNonNull(GraphQLString) },
     patientId: { type: GraphQLNonNull(GraphQLString) },
     bodyTemp: { type: GraphQLNonNull(GraphQLString) },
     heartRate: { type: GraphQLNonNull(GraphQLString) },
@@ -73,6 +72,18 @@ const UserQuery = new GraphQLObjectType({
         return user;
       },
     },
+    formById: {
+      type: FormType,
+      description: "Returns the forms of a patient",
+      args: {
+        patientId: { type: GraphQLString },
+      },
+      resolve: async (parent, args) => {
+        let forms = await Form.findById(args.patientId);
+        return forms;
+      },
+    },
+    
   }),
 });
 
@@ -80,14 +91,14 @@ const FormQuery = new GraphQLObjectType({
   name: "Query",
   description: "Form Queries",
   fields: () => ({
-    userById: {
+    formById: {
       type: FormType,
       description: "Returns the forms of a patient",
       args: {
-        _id: { type: GraphQLString },
+        patientId: { type: GraphQLString },
       },
       resolve: async (parent, args) => {
-        let forms = await Form.findById(args._id);
+        let forms = await Form.findById(args._ipatientIdd);
         return forms;
       },
     },
@@ -116,6 +127,28 @@ const UserMutation = new GraphQLObjectType({
         });
         const newUser = await user.save();
         return newUser;
+      },
+    },
+    addForm: {
+      type: FormType,
+      description: "Add a Form",
+      args: {
+        patientId: { type: GraphQLNonNull(GraphQLString) },
+        bodyTemp: { type: GraphQLNonNull(GraphQLString) },
+        heartRate: { type: GraphQLNonNull(GraphQLString) },
+        bloodPress: { type: GraphQLNonNull(GraphQLString) },
+        respRate: { type: GraphQLNonNull(GraphQLString) },
+      },
+      resolve: async (parent, args) => {
+        const form = new Form({
+          patientId: args.patientId,
+          bodyTemp: args.bodyTemp,
+          heartRate: args.heartRate,
+          bloodPress: args.bloodPress,
+          respRate: args.respRate,
+        });
+        const newForm = await form.save();
+        return newForm;
       },
     },
   }),
@@ -151,8 +184,8 @@ const FormMutation = new GraphQLObjectType({
 });
 
 const userSchema = new GraphQLSchema({
-  query: UserQuery, FormQuery,
-  mutation: UserMutation, FormMutation,
+  query: UserQuery,
+  mutation: UserMutation, 
 });
 
 app.use(express.json());
