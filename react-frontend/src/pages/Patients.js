@@ -6,7 +6,6 @@ import Container from 'react-bootstrap/Container';
 const GET_PATIENTS = gql`
 {
   getPatients{
-    _id
     name
     email
     userType

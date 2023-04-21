@@ -38,7 +38,6 @@ export default function VitalSigns() {
       bloodPress: $bloodPress,
       respRate: $respRate
     ) {
-      _id
       patientId
       heartRate
       bodyTemp

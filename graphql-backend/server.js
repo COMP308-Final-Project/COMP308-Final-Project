@@ -258,28 +258,6 @@ const UserMutation = new GraphQLObjectType({
       },
     },
    
-    addForm: {
-      type: FormType,
-      description: "Add a Form",
-      args: {
-        patientId: { type: GraphQLNonNull(GraphQLString) },
-        bodyTemp: { type: GraphQLNonNull(GraphQLString) },
-        heartRate: { type: GraphQLNonNull(GraphQLString) },
-        bloodPress: { type: GraphQLNonNull(GraphQLString) },
-        respRate: { type: GraphQLNonNull(GraphQLString) },
-      },
-      resolve: async (parent, args) => {
-        const form = new Form({
-          patientId: args.patientId,
-          bodyTemp: args.bodyTemp,
-          heartRate: args.heartRate,
-          bloodPress: args.bloodPress,
-          respRate: args.respRate,
-        });
-        const newForm = await form.save();
-        return newForm;
-      },
-    },
   }),
 });
 
