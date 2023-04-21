@@ -9,10 +9,8 @@ import Register from "./login/Register";
 import FitnessGame from "./fitness-game/FitnessGame";
 import Covid from "./covid/Covid";
 import Form from "./form/Form";
-import CovidForm from "./covid/CovidForm";
 import accountContext from "./context/accountContext";
 import NavBar from "./pages/NavBar";
-import CovidRecords from "./covid/CovidRecords";
 
 const cache = new InMemoryCache({
   typePolicies: {
@@ -63,8 +61,6 @@ function App() {
                 <Route path="/fitness-game" element={<FitnessGame />} />
                 <Route path="/covid" element={<Covid />} />
                 <Route path="/form" element={<Form />} />
-                <Route path="/covid" element={<CovidForm />} />
-                <Route path="/covid-records" element={<CovidRecords />} />
 
                 <Route path="*" element={<NotFound />} />
               </Routes>

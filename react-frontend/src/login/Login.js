@@ -1,6 +1,6 @@
 import { useRef, useState, useContext, useEffect } from "react";
 import accountContext from "../context/accountContext";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useLazyQuery } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
 
 //bootstrap
@@ -29,13 +29,7 @@ export default function Login(props) {
   const [errMsg, setErrMsg] = useState("");
   const [logIn, setLogIn] = useState(false);
 
-  const { loading, data } = useQuery(GET_USER_BY_EMAIL, {
-    fetchPolicy: "network-only",
-    skip: !logIn,
-    variables: {
-      email: email,
-    },
-  });
+  const [getUserByEmail, { loading, data }] = useLazyQuery(GET_USER_BY_EMAIL);
 
   function handleChange(e) {
     setLogIn(false);
@@ -54,28 +48,24 @@ export default function Login(props) {
   function handleLogin(e) {
     e.preventDefault();
     setLogIn(true);
+    getUserByEmail({
+      variables: {
+        email: email,
+      },
+    });
   }
 
   useEffect(() => {
-    if (logIn) {
-      if (loading) {
-        setErrMsg("Authenticating...");
-      } else if (data?.userByEmail?.password) {
-        if (data.userByEmail.password === password) {
-          setLoggedIn(true);
-          setUserType(data.userByEmail.userType);
-          setUserId(data.userByEmail._id);
-          navigate("/home");
-        } else {
-          setErrMsg("Incorrect username or password.");
-          setLogIn(false);
-        }
-      } else if (logIn) {
-        setErrMsg("Incorrect username or password.");
-        setLogIn(false);
-      }
+    if (loading) {
+      setErrMsg("Authenticating...");
+    } else if (data?.userByEmail?.password) {
+      setLoggedIn(true);
+      setUserType(data.userByEmail.userType);
+      setUserId(data.userByEmail._id);
+      navigate("/home");
+    } else if (logIn) {
+      setErrMsg("Incorrect userName or password.");
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, data]);
 
