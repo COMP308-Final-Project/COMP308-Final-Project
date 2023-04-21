@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+//const VitalForm = require("./form")
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -16,7 +17,8 @@ const userSchema = new mongoose.Schema({
   userType: {
     type: String,
     required: true,
-  },
+  }
+  
 });
 
 module.exports = mongoose.model("User", userSchema);

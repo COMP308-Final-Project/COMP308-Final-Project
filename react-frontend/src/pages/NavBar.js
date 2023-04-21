@@ -8,6 +8,8 @@ import Navbar from "react-bootstrap/Navbar";
 import { LinkContainer } from "react-router-bootstrap";
 
 export default function NavBar(props) {
+  const NURSE_TYPE = "NURSE";
+  const PATIENT_TYPE = "PATIENT";
   let navigate = useNavigate();
   const { loggedIn, setLoggedIn, userType, setUserType, setUserId } =
     React.useContext(accountContext);
@@ -57,6 +59,22 @@ export default function NavBar(props) {
         {userType === "PATIENT" && loggedIn ? (
             <LinkContainer to="/form">
               <Nav.Link>Vitals Form</Nav.Link>
+            </LinkContainer>
+          ) : (
+            <div></div>
+          )}
+
+          {userType === NURSE_TYPE && loggedIn ? (
+            <LinkContainer to="/patients">
+              <Nav.Link>Patients</Nav.Link>
+            </LinkContainer>
+          ) : (
+            <div></div>
+          )}
+
+          {userType === PATIENT_TYPE && loggedIn ? (
+            <LinkContainer to="/vital-signs">
+              <Nav.Link>Vital Signs</Nav.Link>
             </LinkContainer>
           ) : (
             <div></div>
