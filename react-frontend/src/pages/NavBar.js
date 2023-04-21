@@ -56,13 +56,6 @@ export default function NavBar(props) {
             <div></div>
           )}
 
-        {userType === "PATIENT" && loggedIn ? (
-            <LinkContainer to="/form">
-              <Nav.Link>Vitals Form</Nav.Link>
-            </LinkContainer>
-          ) : (
-            <div></div>
-          )}
 
           {userType === NURSE_TYPE && loggedIn ? (
             <LinkContainer to="/patients">
