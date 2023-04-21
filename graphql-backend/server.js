@@ -152,7 +152,7 @@ const FormMutation = new GraphQLObjectType({
 
 const userSchema = new GraphQLSchema({
   query: UserQuery, FormQuery,
-  mutation: UserMutation,
+  mutation: UserMutation, FormMutation,
 });
 
 app.use(express.json());
@@ -166,3 +166,5 @@ app.use(
 
 
 app.listen(port, () => console.log(`Server Started: http://localhost:${port}`));
+
+module.exports = app;

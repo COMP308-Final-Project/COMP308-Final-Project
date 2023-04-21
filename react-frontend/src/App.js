@@ -8,6 +8,7 @@ import Login from "./login/Login";
 import Register from "./login/Register";
 import FitnessGame from "./fitness-game/FitnessGame";
 import Covid from "./covid/Covid";
+import Form from "./form/Form";
 import accountContext from "./context/accountContext";
 import NavBar from "./pages/NavBar";
 
@@ -59,6 +60,7 @@ function App() {
                 <Route path="/home" element={<Home />} />
                 <Route path="/fitness-game" element={<FitnessGame />} />
                 <Route path="/covid" element={<Covid />} />
+                <Route path="/form" element={<Form />} />
 
                 <Route path="*" element={<NotFound />} />
               </Routes>
