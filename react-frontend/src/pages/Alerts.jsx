@@ -2,6 +2,7 @@ import { useQuery, gql } from "@apollo/client";
 import {useState, useEffect} from "react";
 //import { GET_ALERTS } from "../queries/alertQueries";
 import AlertCard from "./AlertCard";
+import Button from "react-bootstrap/Button";
 
 //putting this here because I was getting an error with the import statement
 const GET_ALERTS = gql`
@@ -20,10 +21,15 @@ export default function Alerts() {
 
     const [alertList, setAlertList] = useState([]);
     const [message, setMessage] = useState("");
+    const [refresh, setRefresh] = useState(true);
 
     
 
-    const { loading, error, data } = useQuery(GET_ALERTS);
+    const { loading, error, data } = useQuery(GET_ALERTS,{
+        pollInterval: 5000,
+        skip: !refresh,
+        fetchPolicy: "network-only"
+    });
 
     useEffect(()=>{
         if(loading){
@@ -32,16 +38,25 @@ export default function Alerts() {
         }
         else if(data){
             setAlertList(data.getAlerts)
-            console.log(data.getAlerts)
+            setRefresh(false);
         }else if(error){
             setMessage("Error:")
         }      
 
     }, [loading,data, error]);
 
+    function updateRecord(){
+        setRefresh(true);
+
+    }
+
 
   return (
     <>
+    <Button variant="info" onClick={updateRecord}>
+        Refresh
+      </Button>
+
     <p>{message}</p>
         {alertList.length > 0 ? (
             <div className="row mt-4">
