@@ -1,5 +1,5 @@
 import {React, useEffect, useState} from 'react'
-import { useQuery,useMutation, gql} from "@apollo/client";
+import { useQuery, gql} from "@apollo/client";
 import Table from 'react-bootstrap/Table';
 import Container from 'react-bootstrap/Container';
 import PatientModal from '../modals/PatientModal';

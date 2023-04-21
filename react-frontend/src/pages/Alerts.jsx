@@ -54,10 +54,9 @@ export default function Alerts() {
 
   return (
     <>
-    <Button variant="info" onClick={updateRecord}>
+      <Button variant="info" onClick={updateRecord}>
         Refresh
       </Button>
-
     <p>{message}</p>
         {alertList.length > 0 ? (
             <div className="row mt-4">
