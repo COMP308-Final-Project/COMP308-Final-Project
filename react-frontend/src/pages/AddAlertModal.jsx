@@ -1,6 +1,6 @@
-import { useState, useQuery } from "react";
+import { useState } from "react";
 import { FaList } from "react-icons/fa";
-import { useMutation, gql } from "@apollo/client";
+import { useMutation, gql, useQuery } from "@apollo/client";
 //import { ADD_ALERT } from "../mutations/alertMutations";
 //import { GET_ALERTS } from "../queries/alertQueries";
 //import { GET_PATIENTS } from "../queries/patientQueries";
@@ -187,14 +187,15 @@ export default function AddAlertModal() {
                                                                                     data-bs-dismiss="modal"
                                                                                 >
                                                                                     Submit
-                                                                                    </button>
-                                                                                </form>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                        </>
-                                                    )}
-                                                </>
+                                                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </>
+                                            
   )
 }
