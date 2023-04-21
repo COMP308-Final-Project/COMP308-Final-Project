@@ -2,42 +2,51 @@ import { useContext, useRef, useState, useEffect } from "react";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import accountContext from "../context/accountContext";
 import { useNavigate } from "react-router-dom";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 //bootstrap
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Container from "react-bootstrap/Container";
 
+const userClient = new ApolloClient({
+    uri: "http://localhost:2003/users",
+    cache: new InMemoryCache(),
+  });
+
 const ADD_FORM = gql`
-mutation addForm(
-  $patientId: String!
-  $bodyTemp: String!
-  $heartRate: String!
-  $bloodPress: String!
-  $respRate: String!
+mutation AddForm(
+  $patientId: String
+  $bodyTemp: String
+  $heartRate: String
+  $bloodPress: String
+  $respRate: String
 ) {
-  addUser(
+  addForm(
     patientId: $patientId
     bodyTemp: $bodyTemp
     heartRate: $heartRate
     bloodPress: $bloodPress
     respRate: $respRate
   ) {
-    _id
+    patientId
   }
 }
 `;
 
 export default function VitalsForm() {
-  const { loggedIn, userType, userId } = useContext(accountContext);
+  const { userId } = useContext(accountContext);
   const navigate = useNavigate();
+  const [addForm, setAddForm] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
 
   const [bodyTemp, setBodyTemp] = useState("");
   const [heartRate, setHeartRate] = useState("");
   const [bloodPress, setBloodPress] = useState("");
   const [respRate, setRespRate] = useState("");
 
-  const [addForm] = useMutation(ADD_FORM, {
+  const [addVitalsForm] = useMutation(ADD_FORM, {
+    client: userClient,
     variables: {
         patientId: userId,
         bodyTemp: bodyTemp,
@@ -66,13 +75,31 @@ export default function VitalsForm() {
     }
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    addForm();
+  useEffect(() => {
+    if (addForm) {
+      //submit form
+      addVitalsForm()
+        .then(() => {
+          //handle ok
+          navigate("/home");
+          setAddForm(false);
+        })
+        .catch((error) => {
+          setErrMsg("An error occured");
+          setAddForm(false);
+        });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addForm]);
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    setAddForm(true);
   }
 
     return (
-        <Container>
+        <div>
+          <p>{errMsg}</p>
           <h1>Register</h1>
           <Form>
             <Form.Group className="mb-3" controlId="formBodyTemp">
@@ -125,6 +152,6 @@ export default function VitalsForm() {
               Submit
             </Button>
           </div>
-        </Container>
+          </div>
       );
 }
