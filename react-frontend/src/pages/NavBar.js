@@ -55,6 +55,13 @@ export default function NavBar(props) {
           ) : (
             <div></div>
           )}
+          {userType === "PATIENT" && loggedIn ? (
+            <LinkContainer to="/add-alert">
+              <Nav.Link>Raise Alert</Nav.Link>
+            </LinkContainer>
+          ) : (
+            <div></div>
+          )}
 
 
           {userType === NURSE_TYPE && loggedIn ? (
@@ -75,6 +82,7 @@ export default function NavBar(props) {
         </Nav>
 
         <Nav>
+
           {loggedIn ? (
             <Nav.Link onClick={handleLogout}>Log Out</Nav.Link>
           ) : (

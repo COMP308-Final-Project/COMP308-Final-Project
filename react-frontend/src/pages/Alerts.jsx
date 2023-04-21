@@ -39,6 +39,7 @@ export default function Alerts() {
         else if(data){
             setAlertList(data.getAlerts)
             setRefresh(false);
+            setMessage("");
         }else if(error){
             setMessage("Error:")
         }      

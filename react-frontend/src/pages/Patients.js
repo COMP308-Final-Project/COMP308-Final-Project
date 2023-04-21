@@ -16,7 +16,6 @@ const GET_PATIENTS = gql`
 }
 `;
 
-
 export default function Patients() {
 
     //Hooks

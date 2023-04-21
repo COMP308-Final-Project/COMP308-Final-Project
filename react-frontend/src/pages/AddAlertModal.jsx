@@ -1,35 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import { FaList } from "react-icons/fa";
-import { useMutation, gql, useQuery } from "@apollo/client";
+import { useMutation, gql } from "@apollo/client";
 import accountContext from "../context/accountContext";
-
-//import { ADD_ALERT } from "../mutations/alertMutations";
-//import { GET_ALERTS } from "../queries/alertQueries";
-//import { GET_PATIENTS } from "../queries/patientQueries";
-
-// GET_ALERTS
-const GET_ALERTS = gql`
-{
-    getAlerts {
-        _id
-        alertName
-        alertDescription
-        status 
-    }
-}
-`;
-
-// GET_PATIENTS
-const GET_PATIENTS = gql`
-{
-  getPatients{
-    name
-    email
-    userType
-    
-  }
-}
-`;
 
 // ADD_ALERT
 const ADD_ALERT = gql`
@@ -79,9 +51,6 @@ export default function AddAlertModal(props) {
         },
     });
 
-
-    // Get Patients for select
-    const { loading, error } = useQuery(GET_PATIENTS);
     const onSubmit = (e) => {
         e.preventDefault();
         setSubmit(true);
@@ -92,12 +61,11 @@ export default function AddAlertModal(props) {
             setErrMsg("");
             addAlert()
             .then(()=>{
-                setErrMsg("ok");
                 setAlertName('');
                 setAlertDescription('');
                 setPatientId(userId);
                 setStatus('ACTIVE');
-                setSubmit(false)
+                
 
             }).catch(() =>{
                 setErrMsg("Error")
@@ -112,18 +80,15 @@ export default function AddAlertModal(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [submit])
 
-    
-    if (loading) return null;
-    if (error) return 'Something Went Wrong';
 
-    
 
   return (
     <>
-    {errMsg}
-    <br></br>
-    {!loading && !error && (
-        <>
+    <h1>Click the button below to raise an alert</h1>
+    
+    <p>Alerts are sent directly to nurses and should be used for emergencies only</p>
+    {(
+        <>{errMsg}
             <button
                 type="button"
                 className="btn btn-primary"
