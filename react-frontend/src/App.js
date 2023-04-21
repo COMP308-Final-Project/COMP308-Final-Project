@@ -10,6 +10,8 @@ import FitnessGame from "./fitness-game/FitnessGame";
 import Covid from "./covid/Covid";
 import accountContext from "./context/accountContext";
 import NavBar from "./pages/NavBar";
+import Patients from "./pages/Patients";
+import VitalSigns from "./pages/VitalSigns";
 
 const cache = new InMemoryCache({
   typePolicies: {
@@ -57,8 +59,11 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/home" element={<Home />} />
+                <Route path="/patients" element={<Patients/>} />
                 <Route path="/fitness-game" element={<FitnessGame />} />
                 <Route path="/covid" element={<Covid />} />
+                <Route path="/vital-signs" element={<VitalSigns />} />
+                
 
                 <Route path="*" element={<NotFound />} />
               </Routes>

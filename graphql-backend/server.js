@@ -16,8 +16,12 @@ const {
   GraphQLList,
   GraphQLInt,
   GraphQLNonNull,
+  GraphQLFloat,
 } = require("graphql");
 const { Query } = require("mongoose");
+
+//Const
+const PATIENT_TYPE = "PATIENT";
 
 // Connect Database
 connectDB();
@@ -48,7 +52,7 @@ const FormType = new GraphQLObjectType({
 });
 
 const UserQuery = new GraphQLObjectType({
-  name: "Query",
+  name: "UserQuery",
   description: "User Queries",
   fields: () => ({
     userById: {
@@ -73,11 +77,47 @@ const UserQuery = new GraphQLObjectType({
         return user;
       },
     },
+
+    getPatients: {
+      type: GraphQLList( UserType),
+      description: "Returns a list of patients",
+      args: {
+      },
+      resolve: async (parent, args) => {
+        let users = await User.find({userType:PATIENT_TYPE}).exec();
+        console.log("Get Patients:", users)
+        return users;
+      },
+    },
+    getRecordById: {
+      type: FormType,
+      description: "Returns the forms of a patient",
+      args: {
+        _id: { type: GraphQLString },
+      },
+      resolve: async (parent, args) => {
+        let forms = await Form.findById(args._id);
+        return forms;
+      },
+    },
+
+    getAllRecords: {
+      type: GraphQLList(FormType),
+      description: "Returns all the records",
+      args: {
+      
+      },
+      resolve: async (parent, args) => {
+        let forms = await Form.find();
+        console.log("GetForms", forms)
+        return forms;
+      },
+    },
   }),
 });
 
 const FormQuery = new GraphQLObjectType({
-  name: "Query",
+  name: "FormQuery",
   description: "Form Queries",
   fields: () => ({
     userById: {
@@ -88,6 +128,19 @@ const FormQuery = new GraphQLObjectType({
       },
       resolve: async (parent, args) => {
         let forms = await Form.findById(args._id);
+        return forms;
+      },
+    },
+
+    allRecords: {
+      type: FormType,
+      description: "Returns all the records",
+      args: {
+      
+      },
+      resolve: async (parent, args) => {
+        let forms = await Form.find();
+        
         return forms;
       },
     },
@@ -118,6 +171,30 @@ const UserMutation = new GraphQLObjectType({
         return newUser;
       },
     },
+    addForm: {
+      type: FormType,
+      description: "Add a Form",
+      args: {
+        patientId: { type: GraphQLNonNull(GraphQLString) },
+        bodyTemp: { type: GraphQLNonNull(GraphQLString) },
+        heartRate: { type: GraphQLNonNull(GraphQLString) },
+        bloodPress: { type: GraphQLNonNull(GraphQLString) },
+        respRate: { type: GraphQLNonNull(GraphQLString) },
+      },
+      resolve: async (parent, args) => {
+        const form = new Form({
+          patientId: args.patientId,
+          bodyTemp: args.bodyTemp,
+          heartRate: args.heartRate,
+          bloodPress: args.bloodPress,
+          respRate: args.respRate,
+        });
+        const newForm = await form.save();
+        console.log("New Form", newForm)
+        return newForm;
+      },
+    },
+   
   }),
 });
 
@@ -150,8 +227,9 @@ const FormMutation = new GraphQLObjectType({
   }),
 });
 
+
 const userSchema = new GraphQLSchema({
-  query: UserQuery, FormQuery,
+  query: UserQuery,
   mutation: UserMutation,
 });
 
