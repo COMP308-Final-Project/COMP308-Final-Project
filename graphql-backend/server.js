@@ -120,13 +120,14 @@ const UserQuery = new GraphQLObjectType({
       },
     },
     formById: {
-      type: FormType,
+      type: GraphQLList(FormType),
       description: "Returns the forms of a patient",
       args: {
         patientId: { type: GraphQLString },
       },
       resolve: async (parent, args) => {
-        let forms = await Form.findById(args.patientId);
+        let forms = await Form.find({patientId:args.patientId});
+        console.log("Form By Id:", forms)
         return forms;
       },
     },
