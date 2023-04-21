@@ -25,6 +25,7 @@ export default function Home() {
       <h1>Home Page</h1>
       <AddAlertModal />
     </div>
+    <hr />
     <Alerts />
 
     </>

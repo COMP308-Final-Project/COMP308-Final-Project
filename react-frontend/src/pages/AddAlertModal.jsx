@@ -31,28 +31,31 @@ const GET_PATIENTS = gql`
 
 // ADD_ALERT
 const ADD_ALERT = gql`
-    mutation addAlert(alertName: String!, alertDescription: String!, status: AlertStatus!, patientId: _id!){
-        addAlert(alertName: $alertName, alertDescription: $alertDescription, status: $status, patientId: $patientId){
+    mutation AddAlert(
+        $alertName: String!
+        $alertDescription: String!
+        $patientId: ID!
+        $status: AlertStatus!
+    ) {
+        addAlert(
+            alertName: $alertName
+            alertDescription: $alertDescription
+            status: $status
+            patientId: $patientId
+        ) {
             _id
             alertName
             alertDescription
             status
-            patientId: $_id
-        }{
-            _id
-            name
-            userName
-            email
-            user{
+            user {
                 _id
                 name
-                userName
                 email
                 userType
             }
-
         }
     }
+
 `;
 
 export default function AddAlertModal() {
