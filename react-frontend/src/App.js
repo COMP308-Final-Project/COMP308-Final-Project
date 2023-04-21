@@ -68,7 +68,6 @@ function App() {
                 <Route path="/covid-records" element={<CovidRecords />} />
                 <Route path="/vital-signs" element={<VitalSigns />} />
                 
-
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
