@@ -58,7 +58,7 @@ const ADD_ALERT = gql`
 
 `;
 
-export default function AddAlertModal() {
+export default function AddAlertModal(props) {
     const [alertName, setAlertName] = useState("");
     const [alertDescription, setAlertDescription] = useState("");
     const [patientId, setPatientId] = useState("");
@@ -75,9 +75,9 @@ export default function AddAlertModal() {
         },
     });
 
-    // Get Patients for select
-    const { loading, error, data } = useQuery(GET_PATIENTS);
 
+    // Get Patients for select
+    const { loading, error } = useQuery(GET_PATIENTS);
     const onSubmit = (e) => {
         e.preventDefault();
 
@@ -161,33 +161,16 @@ export default function AddAlertModal() {
                                                             >
                                                                 <option value="ACTIVE">ACTIVE</option>
                                                                 <option value="INACTIVE">INACTIVE</option>
-                                                                </select>
-                                                                </div>
+                                                            </select>
+                                                        </div>                                
 
-                                                                <div className="mb-3">
-                                                                    <label className="form-label">Patient</label>
-                                                                    <select
-                                                                        id="patientId"
-                                                                        className="form-select"
-                                                                        value={patientId}
-                                                                        onChange={(e) => setPatientId(e.target.value)}
-                                                                    >
-                                                                        <option value="">Select Patient</option>
-                                                                        {data.patients.map((patient) => (
-                                                                            <option key={patient._id} value={patient._id}>
-                                                                                {patient.firstName} {patient.lastName}
-                                                                                </option>
-                                                                                ))}
-                                                                                </select>
-                                                                                </div>
-
-                                                                                <button
-                                                                                    type="submit"
-                                                                                    className="btn btn-primary"
-                                                                                    data-bs-dismiss="modal"
-                                                                                >
-                                                                                    Submit
-                                                                                </button>
+                                                     <button
+                                                         type="submit"
+                                                         className="btn btn-primary"
+                                                         data-bs-dismiss="modal"
+                                                     >
+                                                         Submit
+                                                     </button>
                                             </form>
                                         </div>
                                     </div>
