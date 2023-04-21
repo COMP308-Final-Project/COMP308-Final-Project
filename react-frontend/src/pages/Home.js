@@ -2,6 +2,7 @@ import { useContext, useEffect } from "react";
 import accountContext from "../context/accountContext";
 import { useNavigate } from "react-router-dom";
 import Alerts from "./Alerts";
+import AddAlertModal from "./AddAlertModal";
 
 export default function Home() {
   const { loggedIn, userType, userId } = useContext(accountContext);
@@ -22,8 +23,10 @@ export default function Home() {
     <>
     <div>
       <h1>Home Page</h1>
-      <Alerts />
+      <AddAlertModal />
     </div>
+    <Alerts />
+
     </>
   );
 }
