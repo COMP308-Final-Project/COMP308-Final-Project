@@ -85,13 +85,12 @@ const AlertType = new GraphQLObjectType({
     status: { type: GraphQLString },
     user: {
       type: UserType,
-      resolve(parent, args){
+      resolve(parent, args) {
         return User.findById(parent.patientId);
-      }
+      },
     },
   }),
 });
-
 
 const UserQuery = new GraphQLObjectType({
   name: "UserQuery",
@@ -130,16 +129,14 @@ const UserQuery = new GraphQLObjectType({
         return forms;
       },
     },
-    
 
     getPatients: {
-      type: GraphQLList( UserType),
+      type: GraphQLList(UserType),
       description: "Returns a list of patients",
-      args: {
-      },
+      args: {},
       resolve: async (parent, args) => {
-        let users = await User.find({userType:PATIENT_TYPE}).exec();
-        console.log("Get Patients:", users)
+        let users = await User.find({ userType: PATIENT_TYPE }).exec();
+        console.log("Get Patients:", users);
         return users;
       },
     },
@@ -158,28 +155,25 @@ const UserQuery = new GraphQLObjectType({
     getAllRecords: {
       type: GraphQLList(FormType),
       description: "Returns all the records",
-      args: {
-      
-      },
+      args: {},
       resolve: async (parent, args) => {
         let forms = await Form.find();
-        console.log("GetForms", forms)
+        console.log("GetForms", forms);
         return forms;
       },
     },
     // alerts
-    getAlerts : {
+    getAlerts: {
       type: GraphQLList(AlertType),
       description: "Returns all alerts",
-      args: {
-      },
+      args: {},
       resolve: async (parent, args) => {
         let alerts = await Alert.find();
-        console.log("Get Alerts:", alerts)
+        console.log("Get Alerts:", alerts);
         return alerts;
       },
     },
-    alert : {
+    alert: {
       type: AlertType,
       description: "Returns a single alert",
       args: {
@@ -187,7 +181,7 @@ const UserQuery = new GraphQLObjectType({
       },
       resolve: async (parent, args) => {
         let alert = await Alert.findById(args._id);
-        console.log("Get Alert:", alert)
+        console.log("Get Alert:", alert);
         return alert;
       },
     },
@@ -213,9 +207,7 @@ const FormQuery = new GraphQLObjectType({
     allRecords: {
       type: FormType,
       description: "Returns all the records",
-      args: {
-      
-      },
+      args: {},
       resolve: async (parent, args) => {
         let forms = await Form.findById(args._id);
         return forms;
@@ -225,12 +217,10 @@ const FormQuery = new GraphQLObjectType({
     allRecords: {
       type: FormType,
       description: "Returns all the records",
-      args: {
-      
-      },
+      args: {},
       resolve: async (parent, args) => {
         let forms = await Form.find();
-        
+
         return forms;
       },
     },
@@ -255,23 +245,21 @@ const CovidQuery = new GraphQLObjectType({
   }),
 });
 
-
 const AlertQuery = new GraphQLObjectType({
   name: "AlertQuery",
   description: "Alert Queries",
   fields: () => ({
-    alerts : {
+    alerts: {
       type: GraphQLList(AlertType),
       description: "Returns all alerts",
-      args: {
-      },
+      args: {},
       resolve: async (parent, args) => {
         let alerts = await Alert.find();
-        console.log("Get Alerts:", alerts)
+        console.log("Get Alerts:", alerts);
         return alerts;
       },
     },
-    alert : {
+    alert: {
       type: AlertType,
       description: "Returns a single alert",
       args: {
@@ -279,13 +267,12 @@ const AlertQuery = new GraphQLObjectType({
       },
       resolve: async (parent, args) => {
         let alert = await Alert.findById(args._id);
-        console.log("Get Alert:", alert)
+        console.log("Get Alert:", alert);
         return alert;
       },
     },
   }),
 });
-
 
 const UserMutation = new GraphQLObjectType({
   name: "Mutation",
@@ -330,7 +317,7 @@ const UserMutation = new GraphQLObjectType({
           respRate: args.respRate,
         });
         const newForm = await form.save();
-        console.log("New Form", newForm)
+        console.log("New Form", newForm);
         return newForm;
       },
     },
@@ -339,38 +326,28 @@ const UserMutation = new GraphQLObjectType({
       type: AlertType,
       description: "Add an alert",
       args: {
-        alertName : { type: GraphQLNonNull(GraphQLString) },
-        alertDescription : { type: GraphQLNonNull(GraphQLString) },
-        status :{
-          type: new GraphQLEnumType({
-            name : 'status',
-            values : {
-              ACTIVE : { value : 'ACTIVE'},
-              RESOLVED : { value : 'RESOLVED'}
-            }
-          }),
-          defaultValue : 'ACTIVE',
-        },
-        patientId : { type: GraphQLNonNull(GraphQLString) },
-
+        alertName: { type: GraphQLNonNull(GraphQLString) },
+        alertDescription: { type: GraphQLNonNull(GraphQLString) },
+        status: { type: GraphQLNonNull(GraphQLString) },
+        patientId: { type: GraphQLNonNull(GraphQLString) },
       },
       resolve: async (parent, args) => {
         const alert = new Alert({
-          alertName : args.alertName,
-          alertDescription : args.alertDescription,
-          status : args.status,
-          patientId : args.patientId,
+          alertName: args.alertName,
+          alertDescription: args.alertDescription,
+          status: args.status,
+          patientId: args.patientId,
         });
         return await alert.save();
-      }
+      },
     },
     deleteAlert: {
-      type  : AlertType,
-      description : "Delete an alert",
-      args : {
-        _id : { type : GraphQLNonNull(GraphQLString) }
+      type: AlertType,
+      description: "Delete an alert",
+      args: {
+        _id: { type: GraphQLNonNull(GraphQLString) },
       },
-      resolve : async (parent, args) => {
+      resolve: async (parent, args) => {
         const alert = await Alert.findByIdAndRemove(args._id);
       },
     },
@@ -378,31 +355,31 @@ const UserMutation = new GraphQLObjectType({
       type: AlertType,
       description: "Update an alert",
       args: {
-        _id : { type: GraphQLNonNull(GraphQLString) },
-        alertName : { type: GraphQLNonNull(GraphQLString) },
-        alertDescription : { type: GraphQLNonNull(GraphQLString) },
-        status :{
+        _id: { type: GraphQLNonNull(GraphQLString) },
+        alertName: { type: GraphQLNonNull(GraphQLString) },
+        alertDescription: { type: GraphQLNonNull(GraphQLString) },
+        status: {
           type: new GraphQLEnumType({
-            name : 'StatusUpdate',
-            values : {
-              ACTIVE : { value : 'ACTIVE'},
-              RESOLVED : { value : 'RESOLVED'}
-            }
+            name: "StatusUpdate",
+            values: {
+              ACTIVE: { value: "ACTIVE" },
+              RESOLVED: { value: "RESOLVED" },
+            },
           }),
-
         },
-
       },
       resolve: async (parent, args) => {
-        const alert = await Alert.findByIdAndUpdate(args._id, {
-          $set: {
-            alertName : args.alertName,
-            alertDescription : args.alertDescription,
-            status : args.status,
+        const alert = await Alert.findByIdAndUpdate(
+          args._id,
+          {
+            $set: {
+              alertName: args.alertName,
+              alertDescription: args.alertDescription,
+              status: args.status,
+            },
           },
-        },
-        { new: true }
-      );
+          { new: true }
+        );
       },
     },
   }),
@@ -484,38 +461,37 @@ const AlertMutation = new GraphQLObjectType({
       type: AlertType,
       description: "Add an alert",
       args: {
-        alertName : { type: GraphQLNonNull(GraphQLString) },
-        alertDescription : { type: GraphQLNonNull(GraphQLString) },
-        status :{
+        alertName: { type: GraphQLNonNull(GraphQLString) },
+        alertDescription: { type: GraphQLNonNull(GraphQLString) },
+        status: {
           type: new GraphQLEnumType({
-            name : 'status',
-            values : {
-              ACTIVE : { value : 'ACTIVE'},
-              RESOLVED : { value : 'RESOLVED'}
-            }
+            name: "status",
+            values: {
+              ACTIVE: { value: "ACTIVE" },
+              RESOLVED: { value: "RESOLVED" },
+            },
           }),
-          defaultValue : 'ACTIVE',
+          defaultValue: "ACTIVE",
         },
-        patientId : { type: GraphQLNonNull(GraphQLString) },
-
+        patientId: { type: GraphQLNonNull(GraphQLString) },
       },
       resolve: async (parent, args) => {
         const alert = new Alert({
-          alertName : args.alertName,
-          alertDescription : args.alertDescription,
-          status : args.status,
-          patientId : args.patientId,
+          alertName: args.alertName,
+          alertDescription: args.alertDescription,
+          status: args.status,
+          patientId: args.patientId,
         });
         return await alert.save();
-        }
+      },
     },
     deleteAlert: {
-      type  : AlertType,
-      description : "Delete an alert",
-      args : {
-        _id : { type : GraphQLNonNull(GraphQLString) }
+      type: AlertType,
+      description: "Delete an alert",
+      args: {
+        _id: { type: GraphQLNonNull(GraphQLString) },
       },
-      resolve : async (parent, args) => {
+      resolve: async (parent, args) => {
         const alert = await Alert.findByIdAndRemove(args._id);
       },
     },
@@ -523,40 +499,39 @@ const AlertMutation = new GraphQLObjectType({
       type: AlertType,
       description: "Update an alert",
       args: {
-        _id : { type: GraphQLNonNull(GraphQLString) },
-        alertName : { type: GraphQLNonNull(GraphQLString) },
-        alertDescription : { type: GraphQLNonNull(GraphQLString) },
-        status :{
+        _id: { type: GraphQLNonNull(GraphQLString) },
+        alertName: { type: GraphQLNonNull(GraphQLString) },
+        alertDescription: { type: GraphQLNonNull(GraphQLString) },
+        status: {
           type: new GraphQLEnumType({
-            name : 'StatusUpdate',
-            values : {
-              ACTIVE : { value : 'ACTIVE'},
-              RESOLVED : { value : 'RESOLVED'}
-            }
+            name: "StatusUpdate",
+            values: {
+              ACTIVE: { value: "ACTIVE" },
+              RESOLVED: { value: "RESOLVED" },
+            },
           }),
-
         },
-
       },
       resolve: async (parent, args) => {
-        const alert = await Alert.findByIdAndUpdate(args._id, {
-          $set: {
-            alertName : args.alertName,
-            alertDescription : args.alertDescription,
-            status : args.status,
+        const alert = await Alert.findByIdAndUpdate(
+          args._id,
+          {
+            $set: {
+              alertName: args.alertName,
+              alertDescription: args.alertDescription,
+              status: args.status,
+            },
           },
-        },
-        { new: true }
-      );
+          { new: true }
+        );
       },
     },
   }),
 });
 
-
 const userSchema = new GraphQLSchema({
   query: UserQuery,
-  mutation: UserMutation, 
+  mutation: UserMutation,
 });
 
 const covidSchema = new GraphQLSchema({
@@ -591,7 +566,6 @@ app.use(
     graphiql: true,
   })
 );
-
 
 app.listen(port, () => console.log(`Server Started: http://localhost:${port}`));
 

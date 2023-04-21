@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import { FaList } from "react-icons/fa";
 import { useMutation, gql, useQuery } from "@apollo/client";
+import accountContext from "../context/accountContext";
+
 //import { ADD_ALERT } from "../mutations/alertMutations";
 //import { GET_ALERTS } from "../queries/alertQueries";
 //import { GET_PATIENTS } from "../queries/patientQueries";
@@ -34,8 +36,8 @@ const ADD_ALERT = gql`
     mutation AddAlert(
         $alertName: String!
         $alertDescription: String!
-        $patientId: ID!
-        $status: AlertStatus!
+        $patientId: String!
+        $status: String!
     ) {
         addAlert(
             alertName: $alertName
@@ -59,19 +61,21 @@ const ADD_ALERT = gql`
 `;
 
 export default function AddAlertModal(props) {
+    const { userId } = useContext(accountContext);
     const [alertName, setAlertName] = useState("");
     const [alertDescription, setAlertDescription] = useState("");
-    const [patientId, setPatientId] = useState("");
-    const [status, setStatus] = useState("new");
+    const [patientId, setPatientId] = useState(userId);
+    const [status, setStatus] = useState("ACTIVE");
+    const [submit, setSubmit] = useState(false)
+    const [errMsg, setErrMsg] = useState("")
+
 
     const [addAlert] = useMutation(ADD_ALERT, {
-        variables: { alertName, alertDescription, patientId, status },
-        update(cache, { data: { addAlert } }) {
-            const { alerts } = cache.readQuery({ query: GET_ALERTS });
-            cache.writeQuery({
-                query: GET_ALERTS,
-                data: { alerts: [...alerts, addAlert] },
-            });
+        variables: {
+            alertName: alertName,
+            alertDescription: alertDescription,
+            status: status,
+            patientId: patientId
         },
     });
 
@@ -80,23 +84,44 @@ export default function AddAlertModal(props) {
     const { loading, error } = useQuery(GET_PATIENTS);
     const onSubmit = (e) => {
         e.preventDefault();
-
-        if ( alertName === '' || alertDescription === '' || status === '' ) {
-            return alert('Please fill in all fields');
-        }
-        addAlert( alertName, alertDescription, patientId, status );
-
-        setAlertName('');
-        setAlertDescription('');
-        setPatientId('');
-        setStatus('new');
+        setSubmit(true);
     };
 
+    useEffect(()=>{
+        if(submit){
+            setErrMsg("");
+            addAlert()
+            .then(()=>{
+                setErrMsg("ok");
+                setAlertName('');
+                setAlertDescription('');
+                setPatientId(userId);
+                setStatus('ACTIVE');
+                setSubmit(false)
+
+            }).catch(() =>{
+                setErrMsg("Error")
+                setAlertName('');
+                setAlertDescription('');
+                setPatientId(userId);
+                setStatus('ACTIVE');
+                setSubmit(false)
+            })
+
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [submit])
+
+    
     if (loading) return null;
     if (error) return 'Something Went Wrong';
 
+    
+
   return (
     <>
+    {errMsg}
+    <br></br>
     {!loading && !error && (
         <>
             <button

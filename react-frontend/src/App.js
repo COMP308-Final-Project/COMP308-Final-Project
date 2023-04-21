@@ -32,6 +32,23 @@ const cache = new InMemoryCache({
 const client = new ApolloClient({
   uri: "http://localhost:2003/users",
   cache,
+  defaultOptions: {
+    watchQuery: {
+      errorPolicy: "all",
+      // Enable logging for watchQuery
+      log: true,
+    },
+    query: {
+      errorPolicy: "all",
+      // Enable logging for query
+      log: true,
+    },
+    mutate: {
+      errorPolicy: "all",
+      // Enable logging for mutate
+      log: true,
+    },
+  },
 });
 
 function App() {
@@ -61,13 +78,13 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/home" element={<Home />} />
-                <Route path="/patients" element={<Patients/>} />
+                <Route path="/patients" element={<Patients />} />
                 <Route path="/fitness-game" element={<FitnessGame />} />
                 <Route path="/form" element={<Form />} />
                 <Route path="/covid" element={<CovidForm />} />
                 <Route path="/covid-records" element={<CovidRecords />} />
                 <Route path="/vital-signs" element={<VitalSigns />} />
-                
+
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
