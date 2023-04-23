@@ -14,6 +14,8 @@ import CovidRecords from "./covid/CovidRecords";
 import Patients from "./pages/Patients";
 import VitalSigns from "./pages/VitalSigns";
 import AddAlertModal from "./pages/AddAlertModal";
+import AddTip from "./pages/AddTip";
+import EditTip from "./pages/EditTip";
 
 const cache = new InMemoryCache({
   typePolicies: {
@@ -84,6 +86,8 @@ function App() {
                 <Route path="/covid-records" element={<CovidRecords />} />
                 <Route path="/vital-signs" element={<VitalSigns />} />
                 <Route path="/add-alert" element={<AddAlertModal />} />
+                <Route path="/tips/:id" element={<AddTip />} />
+                <Route path="/edit-tip/:id" element={<EditTip />} />
 
                 <Route path="*" element={<NotFound />} />
               </Routes>

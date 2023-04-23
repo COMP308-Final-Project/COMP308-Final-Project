@@ -5,6 +5,7 @@ import Modal from "react-bootstrap/Modal";
 import { Badge } from "react-bootstrap";
 import { useQuery, gql } from "@apollo/client";
 import { MDBRow, MDBCol, MDBTypography } from "mdb-react-ui-kit";
+import { useNavigate } from "react-router-dom";
 
 const GET_FORM_BY_ID = gql`
   query GetFormById($patientId: String!) {
@@ -23,6 +24,7 @@ export default function PatientModal({ PatientModalProps }) {
   const { loading, error, data } = useQuery(GET_FORM_BY_ID, {
     variables: { patientId: PatientModalProps.patientid },
   });
+  const navigate = useNavigate();
 
   //UseEffect
   useEffect(() => {
@@ -30,6 +32,10 @@ export default function PatientModal({ PatientModalProps }) {
     console.log("Data:", data);
   });
 
+  const handleTipPage = () => {
+    navigate(`/tips/${PatientModalProps.patientid}`);
+
+  };
   //Rendering
   if (loading) {
     return "Loading...";
@@ -99,6 +105,7 @@ export default function PatientModal({ PatientModalProps }) {
         </Container>
       </Modal.Body>
       <Modal.Footer>
+        <Button onClick={handleTipPage}>Add Tip</Button>
         <Button onClick={PatientModalProps.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>

@@ -9,6 +9,7 @@ const User = require("./models/user");
 const Form = require("./models/form");
 const Covid = require("./models/covid");
 const Alert = require("./models/alert");
+const Tip = require("./models/tip")
 
 app.use(cors()); // Make sure you have express initialised before this.
 
@@ -89,6 +90,16 @@ const AlertType = new GraphQLObjectType({
         return User.findById(parent.patientId);
       },
     },
+  }),
+});
+
+const TipType = new GraphQLObjectType({
+  name: "Tip",
+  fields: () => ({
+    _id: { type: GraphQLString },
+    patientId: { type: GraphQLString },
+    title: { type: GraphQLString },
+    description: { type: GraphQLString },
   }),
 });
 
@@ -273,6 +284,84 @@ const AlertQuery = new GraphQLObjectType({
       },
     },
   }),
+});
+
+const TipsQuery = new GraphQLObjectType({
+  name: "TipsQuery",
+  description: "Tips Queries",
+  fields: () => ({
+    tips: {
+      type: GraphQLList(TipType),
+      description: "Returns all tips",
+      args: { patientId: { type: GraphQLString },},
+      resolve: async (parent, args) => {
+        let tips = await Tip.find({ patientId: args.patientId }).exec();
+        console.log("Get Tips:", tips);
+        return tips;
+      },
+    },
+    tip: {
+      type: TipType,
+      description: "Returns a single tip",
+      args: {
+        _id: { type: GraphQLNonNull(GraphQLString) },
+      },
+      resolve: async (parent, args) => {
+        let tip = await Tip.findById(args._id).exec();
+        console.log("Get Tip:", tip);
+        return tip;
+      },
+    },
+  }),
+});
+
+const TipMutation = new GraphQLObjectType({
+  name: "TipMutation",
+  fields: {
+    addTip: {
+      type: TipType,
+      args: {
+        patientId: { type: GraphQLNonNull(GraphQLString) },
+        title: { type: GraphQLNonNull(GraphQLString) },
+        description: { type: GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parent, args) {
+        const newTip = new Tip({
+          patientId: args.patientId,
+          title: args.title,
+          description: args.description
+        });
+        return newTip.save();
+      }
+    },
+    updateTip: {
+      type: TipType,
+      args: {
+        _id: { type: GraphQLNonNull(GraphQLString) },
+        patientId: { type: GraphQLNonNull(GraphQLString) },
+        title: { type: GraphQLNonNull(GraphQLString) },
+        description: { type: GraphQLNonNull(GraphQLString) }
+      },
+      resolve(parent, args) {
+        const tipFields = {
+          patientId: args.patientId,
+          title: args.title,
+          description: args.description
+        };
+        return Tip.findByIdAndUpdate(args._id, tipFields, { new: true });
+      }
+    },
+    deleteTip: {
+      type: TipType,
+      description: "Delete an tip",
+      args: {
+        _id: { type: GraphQLNonNull(GraphQLString) },
+      },
+      resolve: async (parent, args) => {
+        return Tip.findByIdAndRemove(args._id);
+      }
+    }
+  }
 });
 
 const UserMutation = new GraphQLObjectType({
@@ -545,6 +634,11 @@ const alertSchema = new GraphQLSchema({
   mutation: AlertMutation,
 });
 
+const tipSchema = new GraphQLSchema({
+  query: TipsQuery,
+  mutation: TipMutation
+});
+
 app.use(express.json());
 app.use(
   "/users",
@@ -564,6 +658,13 @@ app.use(
   "/alert",
   expressGraphQL({
     schema: alertSchema,
+    graphiql: true,
+  })
+);
+app.use(
+  "/tips",
+  expressGraphQL({
+    schema: tipSchema,
     graphiql: true,
   })
 );
